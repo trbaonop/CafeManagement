@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cafe.BLL\Cafe.BLL.csproj" />
+    <ProjectReference Include="..\Cafe.Common\Cafe.Common.csproj" />
+    <ProjectReference Include="..\Cafe.Entity\Cafe.Entity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="frmBanEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmBaoCaoDoanhThu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmMonEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmNguoiDungEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmOrder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmQuanLyBan.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmQuanLyMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmQuanLyNguoiDung.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>
