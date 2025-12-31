@@ -1,0 +1,11 @@
+D:\code\C#\Cafe.Entity\bin\Debug\net8.0\Cafe.Entity.deps.json
+D:\code\C#\Cafe.Entity\bin\Debug\net8.0\Cafe.Entity.dll
+D:\code\C#\Cafe.Entity\bin\Debug\net8.0\Cafe.Entity.pdb
+D:\code\C#\Cafe.Entity\obj\Debug\net8.0\Cafe.Entity.GeneratedMSBuildEditorConfig.editorconfig
+D:\code\C#\Cafe.Entity\obj\Debug\net8.0\Cafe.Entity.AssemblyInfoInputs.cache
+D:\code\C#\Cafe.Entity\obj\Debug\net8.0\Cafe.Entity.AssemblyInfo.cs
+D:\code\C#\Cafe.Entity\obj\Debug\net8.0\Cafe.Entity.csproj.CoreCompileInputs.cache
+D:\code\C#\Cafe.Entity\obj\Debug\net8.0\Cafe.Entity.dll
+D:\code\C#\Cafe.Entity\obj\Debug\net8.0\refint\Cafe.Entity.dll
+D:\code\C#\Cafe.Entity\obj\Debug\net8.0\Cafe.Entity.pdb
+D:\code\C#\Cafe.Entity\obj\Debug\net8.0\ref\Cafe.Entity.dll
