@@ -1,26 +1,28 @@
-﻿using System;
+﻿using Cafe.BLL;       // AuthService
+using Cafe.Common;    // CurrentUser
+using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Cafe.BLL;
-using Cafe.Common;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Cafe.Forms
+namespace Cafe.UI
 {
     public partial class frmLogin : Form
     {
-        private readonly AuthService _authService = new AuthService();
+        private readonly AuthService _authService;
 
-        public frmLogin()
+        public frmLogin(AuthService authService)
         {
             InitializeComponent();
+            _authService = authService ?? throw new ArgumentNullException(nameof(authService));
         }
 
-        private void frmLogin_Load(object sender, EventArgs e)
+        private void FrmLogin_Load(object sender, EventArgs e)
         {
             txtTenDangNhap.Focus();
         }
 
-        private async void btnDangNhap_Click(object sender, EventArgs e)
+        private async void BtnDangNhap_Click(object sender, EventArgs e)
         {
             string tenDN = txtTenDangNhap.Text.Trim();
             string mk = txtMatKhau.Text;
@@ -45,14 +47,16 @@ namespace Cafe.Forms
                     return;
                 }
 
-                // Lưu thông tin người dùng hiện tại
                 CurrentUser.Login(user.MaND, user.TenDangNhap, user.HoTen, user.VaiTro?.TenVaiTro);
 
-                MessageBox.Show($"Chào mừng {CurrentUser.HoTen}!\nVai trò: {CurrentUser.TenVaiTro}",
-                    "Đăng nhập thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Chào mừng {CurrentUser.HoTen}!", "Đăng nhập thành công",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.Hide();
-                new frmMain().ShowDialog();
+
+                var frmMain = Program.ServiceProvider.GetRequiredService<frmMain>();
+                frmMain.ShowDialog();
+
                 this.Close();
             }
             catch (Exception ex)

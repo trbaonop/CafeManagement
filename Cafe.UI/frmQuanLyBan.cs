@@ -1,22 +1,29 @@
-﻿using System;
+﻿using Cafe.BLL;       // BanService
+using Cafe.Common;    // CurrentUser
+using Cafe.Entity;    // Ban
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.EntityFrameworkCore;
-using Cafe.Common;
-using Cafe.DAL;
-using Cafe.Entity;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Cafe.Forms
+namespace Cafe.UI
 {
     public partial class frmQuanLyBan : Form
     {
-        public frmQuanLyBan()
+        private readonly BanService _banService;
+
+        /// <summary>
+        /// Constructor nhận DI từ container
+        /// </summary>
+        public frmQuanLyBan(BanService banService)
         {
             InitializeComponent();
+            _banService = banService ?? throw new ArgumentNullException(nameof(banService));
         }
 
-        private async void frmQuanLyBan_Load(object sender, EventArgs e)
+        private async void FrmQuanLyBan_Load(object sender, EventArgs e)
         {
             if (!CurrentUser.IsAdmin)
             {
@@ -26,23 +33,20 @@ namespace Cafe.Forms
                 return;
             }
 
-            await LoadBan();
+            await LoadBanAsync();
         }
 
-        private async Task LoadBan(string keyword = "")
+        private async Task LoadBanAsync(string keyword = "")
         {
-            using var context = new CafeContext();
-            var query = context.Bans.AsQueryable();
+            var bans = await _banService.GetAllBansAsync();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
                 keyword = keyword.ToLower();
-                query = query.Where(b => b.TenBan.ToLower().Contains(keyword));
+                bans = bans.Where(b => b.TenBan.ToLower().Contains(keyword)).ToList();
             }
 
-            var bans = await query.OrderBy(b => b.MaBan).ToListAsync();
-
-            dgvBan.DataSource = bans.Select(b => new
+            dgvBan.DataSource = bans.OrderBy(b => b.MaBan).Select(b => new
             {
                 b.MaBan,
                 b.TenBan,
@@ -54,71 +58,69 @@ namespace Cafe.Forms
             dgvBan.Columns["TrangThai"].HeaderText = "Trạng thái";
         }
 
-        private async void btnTimKiem_Click(object sender, EventArgs e)
+        private async void BtnTimKiem_Click(object sender, EventArgs e)
         {
-            await LoadBan(txtTimKiem.Text.Trim());
+            await LoadBanAsync(txtTimKiem.Text.Trim());
         }
 
-        private async void btnRefresh_Click(object sender, EventArgs e)
+        private async void BtnRefresh_Click(object sender, EventArgs e)
         {
             txtTimKiem.Clear();
-            await LoadBan();
+            await LoadBanAsync();
         }
 
-        private void btnThem_Click(object sender, EventArgs e)
+        private async void BtnThem_Click(object sender, EventArgs e)
         {
-            var frm = new frmBanEdit(0); // 0 = thêm mới
+            var frm = Program.ServiceProvider.GetRequiredService<frmBanEdit>();
+            frm.MaBan = 0; // 0 = thêm mới
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                LoadBan();
+                await LoadBanAsync();
             }
         }
 
-        private void btnSua_Click(object sender, EventArgs e)
+        private async void BtnSua_Click(object sender, EventArgs e)
         {
             if (dgvBan.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn bàn cần sửa!");
+                MessageBox.Show("Vui lòng chọn bàn cần sửa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             int maBan = Convert.ToInt32(dgvBan.SelectedRows[0].Cells["MaBan"].Value);
-            var frm = new frmBanEdit(maBan);
+
+            var frm = Program.ServiceProvider.GetRequiredService<frmBanEdit>();
+            frm.MaBan = maBan;
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                LoadBan();
+                await LoadBanAsync();
             }
         }
 
-        private async void btnXoa_Click(object sender, EventArgs e)
+        private async void BtnXoa_Click(object sender, EventArgs e)
         {
             if (dgvBan.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn bàn cần xóa!");
+                MessageBox.Show("Vui lòng chọn bàn cần xóa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             int maBan = Convert.ToInt32(dgvBan.SelectedRows[0].Cells["MaBan"].Value);
-            string tenBan = dgvBan.SelectedRows[0].Cells["TenBan"].Value.ToString();
+            string tenBan = dgvBan.SelectedRows[0].Cells["TenBan"].Value?.ToString() ?? "bàn này";
 
-            if (MessageBox.Show($"Bạn có chắc muốn xóa bàn {tenBan}?\nTất cả hóa đơn liên quan sẽ bị xóa!", "Xác nhận",
+            if (MessageBox.Show($"Bạn có chắc muốn xóa {tenBan}?\nTất cả hóa đơn liên quan sẽ bị xóa!", "Xác nhận",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                using var context = new CafeContext();
-                var ban = await context.Bans.FindAsync(maBan);
-                if (ban != null)
-                {
-                    context.Bans.Remove(ban);
-                    await context.SaveChangesAsync();
-                }
-
-                await LoadBan();
+                await _banService.DeleteBanAsync(maBan);
+                await LoadBanAsync();
             }
         }
 
-        private void dgvBan_DoubleClick(object sender, EventArgs e)
+        private void DgvBan_DoubleClick(object sender, EventArgs e)
         {
-            btnSua_Click(sender, e);
+            BtnSua_Click(sender, e);
         }
     }
 }

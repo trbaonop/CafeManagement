@@ -1,6 +1,6 @@
-﻿namespace Cafe.Forms
+﻿namespace Cafe.UI
 {
-    partial class frmMonEdit
+    partial class frmMonEdit : Form
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -88,7 +88,7 @@
             this.btnLuu.TabIndex = 5;
             this.btnLuu.Text = "Lưu";
             this.btnLuu.UseVisualStyleBackColor = true;
-            this.btnLuu.Click += new System.EventHandler(this.btnLuu_Click);
+            this.btnLuu.Click += new System.EventHandler(this.BtnLuu_Click);
             // 
             // btnHuy
             // 
@@ -99,9 +99,9 @@
             this.btnHuy.TabIndex = 6;
             this.btnHuy.Text = "Hủy";
             this.btnHuy.UseVisualStyleBackColor = true;
-            this.btnHuy.Click += new System.EventHandler(this.btnHuy_Click);
+            this.btnHuy.Click += new System.EventHandler(this.BtnHuy_Click);
             // 
-            // frmMonEdit
+            // FrmMonEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -116,14 +116,13 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmMonEdit";
+            this.Name = "FrmMonEdit";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Thêm / Sửa món";
-            this.Load += new System.EventHandler(this.frmMonEdit_Load);
+            this.Load += new System.EventHandler(this.FrmMonEdit_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudDonGia)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

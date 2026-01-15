@@ -1,6 +1,6 @@
-﻿namespace Cafe.Forms
+﻿namespace Cafe.UI
 {
-    partial class frmBaoCaoDoanhThu
+    partial class frmBaoCaoDoanhThu : Form
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -22,6 +22,7 @@
             this.lblTongDoanhThu = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnXuatExcel = new System.Windows.Forms.Button(); // Nút mới
             ((System.ComponentModel.ISupportInitialize)(this.dgvCa)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHoaDon)).BeginInit();
             this.SuspendLayout();
@@ -35,7 +36,7 @@
             this.dgvCa.Size = new System.Drawing.Size(560, 400);
             this.dgvCa.TabIndex = 0;
             this.dgvCa.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCa.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCa_CellClick);
+            this.dgvCa.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DgvCa_CellClick);
             // 
             // dgvHoaDon
             // 
@@ -77,25 +78,36 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Chi tiết hóa đơn trong ca";
             // 
-            // frmBaoCaoDoanhThu
+            // btnXuatExcel
+            // 
+            this.btnXuatExcel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.btnXuatExcel.Location = new System.Drawing.Point(20, 500);
+            this.btnXuatExcel.Name = "btnXuatExcel";
+            this.btnXuatExcel.Size = new System.Drawing.Size(200, 50);
+            this.btnXuatExcel.TabIndex = 5;
+            this.btnXuatExcel.Text = "Xuất Excel";
+            this.btnXuatExcel.UseVisualStyleBackColor = true;
+            this.btnXuatExcel.Click += new System.EventHandler(this.BtnXuatExcel_Click);
+            // 
+            // FrmBaoCaoDoanhThu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1180, 570);
+            this.Controls.Add(this.btnXuatExcel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lblTongDoanhThu);
             this.Controls.Add(this.dgvHoaDon);
             this.Controls.Add(this.dgvCa);
-            this.Name = "frmBaoCaoDoanhThu";
+            this.Name = "FrmBaoCaoDoanhThu";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Báo Cáo Doanh Thu Theo Ca";
-            this.Load += new System.EventHandler(this.frmBaoCaoDoanhThu_Load);
+            this.Load += new System.EventHandler(this.FrmBaoCaoDoanhThu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCa)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvHoaDon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -105,5 +117,6 @@
         private System.Windows.Forms.Label lblTongDoanhThu;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnXuatExcel;
     }
 }

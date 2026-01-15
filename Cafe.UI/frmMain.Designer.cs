@@ -1,6 +1,6 @@
-﻿namespace Cafe.Forms
+﻿namespace Cafe.UI
 {
-    partial class frmMain
+    partial class frmMain : Form
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -22,6 +22,7 @@
             this.mnuQuanLyMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuQuanLyBan = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuQuanLyNguoiDung = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuQuanLyCa = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuBaoCao = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuBaoCaoDoanhThu = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHeThong = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,7 +52,8 @@
             this.mnuQuanLy.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuQuanLyMenu,
             this.mnuQuanLyBan,
-            this.mnuQuanLyNguoiDung});
+            this.mnuQuanLyNguoiDung,
+            this.mnuQuanLyCa});
             this.mnuQuanLy.Name = "mnuQuanLy";
             this.mnuQuanLy.Size = new System.Drawing.Size(80, 24);
             this.mnuQuanLy.Text = "Quản lý";
@@ -61,21 +63,28 @@
             this.mnuQuanLyMenu.Name = "mnuQuanLyMenu";
             this.mnuQuanLyMenu.Size = new System.Drawing.Size(220, 26);
             this.mnuQuanLyMenu.Text = "Danh mục đồ uống";
-            this.mnuQuanLyMenu.Click += new System.EventHandler(this.mnuQuanLyMenu_Click);
+            this.mnuQuanLyMenu.Click += new System.EventHandler(this.MnuQuanLyMenu_Click);
             // 
             // mnuQuanLyBan
             // 
             this.mnuQuanLyBan.Name = "mnuQuanLyBan";
             this.mnuQuanLyBan.Size = new System.Drawing.Size(220, 26);
             this.mnuQuanLyBan.Text = "Quản lý bàn";
-            this.mnuQuanLyBan.Click += new System.EventHandler(this.mnuQuanLyBan_Click); // <-- ĐÃ THÊM SỰ KIỆN CLICK
+            this.mnuQuanLyBan.Click += new System.EventHandler(this.MnuQuanLyBan_Click);
             // 
             // mnuQuanLyNguoiDung
             // 
             this.mnuQuanLyNguoiDung.Name = "mnuQuanLyNguoiDung";
             this.mnuQuanLyNguoiDung.Size = new System.Drawing.Size(220, 26);
             this.mnuQuanLyNguoiDung.Text = "Quản lý người dùng";
-            this.mnuQuanLyNguoiDung.Click += new System.EventHandler(this.mnuQuanLyNguoiDung_Click); // <-- ĐÃ THÊM SỰ KIỆN CLICK
+            this.mnuQuanLyNguoiDung.Click += new System.EventHandler(this.MnuQuanLyNguoiDung_Click);
+            // 
+            // mnuQuanLyCa
+            // 
+            this.mnuQuanLyCa.Name = "mnuQuanLyCa";
+            this.mnuQuanLyCa.Size = new System.Drawing.Size(220, 26);
+            this.mnuQuanLyCa.Text = "Quản lý ca làm việc";
+            this.mnuQuanLyCa.Click += new System.EventHandler(this.MnuQuanLyCa_Click);
             // 
             // mnuBaoCao
             // 
@@ -90,7 +99,7 @@
             this.mnuBaoCaoDoanhThu.Name = "mnuBaoCaoDoanhThu";
             this.mnuBaoCaoDoanhThu.Size = new System.Drawing.Size(220, 26);
             this.mnuBaoCaoDoanhThu.Text = "Doanh thu theo ca";
-            this.mnuBaoCaoDoanhThu.Click += new System.EventHandler(this.mnuBaoCaoDoanhThu_Click);
+            this.mnuBaoCaoDoanhThu.Click += new System.EventHandler(this.MnuBaoCaoDoanhThu_Click);
             // 
             // mnuHeThong
             // 
@@ -105,7 +114,7 @@
             this.mnuDangXuat.Name = "mnuDangXuat";
             this.mnuDangXuat.Size = new System.Drawing.Size(150, 26);
             this.mnuDangXuat.Text = "Đăng xuất";
-            this.mnuDangXuat.Click += new System.EventHandler(this.mnuDangXuat_Click);
+            this.mnuDangXuat.Click += new System.EventHandler(this.MnuDangXuat_Click);
             // 
             // toolStrip1
             // 
@@ -130,7 +139,7 @@
             this.toolStripButtonDangXuat.Name = "toolStripButtonDangXuat";
             this.toolStripButtonDangXuat.Size = new System.Drawing.Size(100, 24);
             this.toolStripButtonDangXuat.Text = "Đăng xuất";
-            this.toolStripButtonDangXuat.Click += new System.EventHandler(this.toolStripButtonDangXuat_Click);
+            this.toolStripButtonDangXuat.Click += new System.EventHandler(this.ToolStripButtonDangXuat_Click);
             // 
             // flowBan
             // 
@@ -141,7 +150,7 @@
             this.flowBan.Size = new System.Drawing.Size(1200, 595);
             this.flowBan.TabIndex = 2;
             // 
-            // frmMain
+            // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -150,18 +159,17 @@
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "frmMain";
+            this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Quản Lý Quán Cà Phê - Dashboard";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.Load += new System.EventHandler(this.frmMain_Load);
+            this.Load += new System.EventHandler(this.FrmMain_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
@@ -171,6 +179,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnuQuanLyMenu;
         private System.Windows.Forms.ToolStripMenuItem mnuQuanLyBan;
         private System.Windows.Forms.ToolStripMenuItem mnuQuanLyNguoiDung;
+        private System.Windows.Forms.ToolStripMenuItem mnuQuanLyCa;
         private System.Windows.Forms.ToolStripMenuItem mnuBaoCao;
         private System.Windows.Forms.ToolStripMenuItem mnuBaoCaoDoanhThu;
         private System.Windows.Forms.ToolStripMenuItem mnuHeThong;

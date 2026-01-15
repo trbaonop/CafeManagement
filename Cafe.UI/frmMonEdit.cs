@@ -1,26 +1,33 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Cafe.BLL;
-using Cafe.Entity;
+using Cafe.BLL;       // MenuService
+using Cafe.Entity;    // Menu
 
-namespace Cafe.Forms
+namespace Cafe.UI
 {
     public partial class frmMonEdit : Form
     {
-        private readonly int _maMon; // 0 = thêm mới, >0 = sửa
-        private readonly MenuService _menuService = new MenuService();
-        private Menu _monHienTai;
+        private readonly MenuService _menuService;
+        private Menu? _monHienTai;
 
-        public frmMonEdit(int maMon = 0)
+        /// <summary>
+        /// Property để truyền MaMon từ form cha (frmQuanLyMenu)
+        /// </summary>
+        public int MaMon { get; set; } = 0; // 0 = thêm mới, >0 = sửa
+
+        /// <summary>
+        /// Constructor nhận DI từ container
+        /// </summary>
+        public frmMonEdit(MenuService menuService)
         {
             InitializeComponent();
-            _maMon = maMon;
+            _menuService = menuService ?? throw new ArgumentNullException(nameof(menuService));
         }
 
-        private async void frmMonEdit_Load(object sender, EventArgs e)
+        private async void FrmMonEdit_Load(object sender, EventArgs e)
         {
-            if (_maMon == 0)
+            if (MaMon == 0)
             {
                 this.Text = "Thêm món mới";
                 chkTrangThai.Checked = true;
@@ -29,10 +36,12 @@ namespace Cafe.Forms
             {
                 this.Text = "Sửa thông tin món";
 
-                _monHienTai = await _menuService.GetMonByIdAsync(_maMon);
+                _monHienTai = await _menuService.GetMonByIdAsync(MaMon);
+
                 if (_monHienTai == null)
                 {
-                    MessageBox.Show("Không tìm thấy món!");
+                    MessageBox.Show("Không tìm thấy món để sửa!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Close();
                     return;
                 }
@@ -43,7 +52,7 @@ namespace Cafe.Forms
             }
         }
 
-        private async void btnLuu_Click(object sender, EventArgs e)
+        private async void BtnLuu_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtTenMon.Text))
             {
@@ -57,15 +66,17 @@ namespace Cafe.Forms
                 return;
             }
 
+            btnLuu.Enabled = false;
+
             try
             {
-                if (_maMon == 0)
+                if (MaMon == 0)
                 {
                     // Thêm mới
                     var monMoi = new Menu
                     {
                         TenMon = txtTenMon.Text.Trim(),
-                        DonGia = (int)nudDonGia.Value,
+                        DonGia = (int)nudDonGia.Value,  // Ép kiểu
                         TrangThai = chkTrangThai.Checked
                     };
 
@@ -75,8 +86,14 @@ namespace Cafe.Forms
                 else
                 {
                     // Sửa
+                    if (_monHienTai == null)
+                    {
+                        MessageBox.Show("Không tìm thấy món để sửa!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
                     _monHienTai.TenMon = txtTenMon.Text.Trim();
-                    _monHienTai.DonGia = (int)nudDonGia.Value;
+                    _monHienTai.DonGia = (int)nudDonGia.Value;  // Ép kiểu
                     _monHienTai.TrangThai = chkTrangThai.Checked;
 
                     await _menuService.UpdateMonAsync(_monHienTai);
@@ -88,11 +105,15 @@ namespace Cafe.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi lưu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi khi lưu món: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnLuu.Enabled = true;
             }
         }
 
-        private void btnHuy_Click(object sender, EventArgs e)
+        private void BtnHuy_Click(object sender, EventArgs e)
         {
             this.Close();
         }
