@@ -4,15 +4,14 @@ using System;
 
 namespace Cafe.DAL
 {
-  
     public class CafeContext : DbContext
     {
-        // Constructor này nhậnDbContextOptions (chứa chuỗi kết nối) từ container
+        // Constructor nhận DbContextOptions từ container (chuỗi kết nối)
         public CafeContext(DbContextOptions<CafeContext> options) : base(options)
         {
         }
 
-        // Các DbSet tương ứng với bảng trong database
+        // DbSet tương ứng với bảng trong database
         public DbSet<VaiTro> VaiTros { get; set; } = null!;
         public DbSet<NguoiDung> NguoiDungs { get; set; } = null!;
         public DbSet<Ban> Bans { get; set; } = null!;
@@ -21,7 +20,6 @@ namespace Cafe.DAL
         public DbSet<HoaDon> HoaDons { get; set; } = null!;
         public DbSet<ChiTietHD> ChiTietHDs { get; set; } = null!;
 
- 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Cấu hình ENUM lưu dưới dạng string
@@ -86,7 +84,26 @@ namespace Cafe.DAL
             modelBuilder.Entity<VaiTro>().HasKey(v => v.MaVaiTro);
             modelBuilder.Entity<NguoiDung>().HasKey(u => u.MaND);
 
+           
+            // Các cấu hình cũ của bạn giữ nguyên...
+
+            // === SỬA CHÍNH: Ép tên bảng đúng chữ hoa/thường như trong DB ===
+            modelBuilder.Entity<ChiTietHD>().ToTable("ChiTietHD");
+
+            // Để an toàn, cấu hình hết các bảng khác (khớp đúng với DB)
+            modelBuilder.Entity<NguoiDung>().ToTable("NguoiDung");
+            modelBuilder.Entity<VaiTro>().ToTable("VaiTro");
+            modelBuilder.Entity<Ban>().ToTable("Ban");
+            modelBuilder.Entity<Ca>().ToTable("Ca");
+            modelBuilder.Entity<Menu>().ToTable("Menu");
+            modelBuilder.Entity<HoaDon>().ToTable("HoaDon");
+
+            // ... các cấu hình ENUM, BIT, FK, HasKey giữ nguyên
+
             base.OnModelCreating(modelBuilder);
         }
+
+          
+        
     }
 }
