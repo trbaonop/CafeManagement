@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Cafe.DAL;     // CafeContext
-using Cafe.Entity;  // Ban
+using Cafe.DAL;
+using Cafe.Entity;
 
 namespace Cafe.BLL
 {
@@ -18,15 +18,12 @@ namespace Cafe.BLL
 
         public async Task<List<Ban>> GetAllBansAsync()
         {
-            return await _context.Bans
-                .OrderBy(b => b.MaBan)
-                .ToListAsync();
+            return await _context.Bans.OrderBy(b => b.MaBan).ToListAsync();
         }
 
         public async Task<Ban?> GetBanByIdAsync(int maBan)
         {
-            return await _context.Bans
-                .FirstOrDefaultAsync(b => b.MaBan == maBan);
+            return await _context.Bans.FindAsync(maBan);
         }
 
         public async Task DeleteBanAsync(int maBan)
@@ -45,6 +42,15 @@ namespace Cafe.BLL
             if (ban != null)
             {
                 ban.TrangThai = trangThaiMoi;
+                await _context.SaveChangesAsync();
+            }
+        }
+        public async Task CapNhatTrangThaiBanAsync(int maBan, string trangThai)
+        {
+            var ban = await _context.Bans.FindAsync(maBan);
+            if (ban != null)
+            {
+                ban.TrangThai = trangThai;
                 await _context.SaveChangesAsync();
             }
         }

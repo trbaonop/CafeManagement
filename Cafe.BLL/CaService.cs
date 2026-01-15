@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Cafe.DAL;
@@ -16,6 +17,11 @@ namespace Cafe.BLL
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        public async Task<Ca?> GetCaByIdAsync(int maCa)
+        {
+            return await _context.Cas.FindAsync(maCa);
+        }
+
         public async Task<Ca> TaoCaMoiAsync()
         {
             var caMoi = new Ca
@@ -23,10 +29,31 @@ namespace Cafe.BLL
                 GioBD = DateTime.Now,
                 DoanhThu = 0
             };
-
             _context.Cas.Add(caMoi);
             await _context.SaveChangesAsync();
             return caMoi;
+        }
+
+        public async Task CapNhatDoanhThuCaAsync(int maCa)
+        {
+            var doanhThu = await _context.HoaDons
+                .Where(h => h.MaCa == maCa && h.TrangThai == "Paid")
+                .SumAsync(h => h.TongTien);
+
+            var ca = await _context.Cas.FindAsync(maCa);
+            if (ca != null)
+            {
+                ca.DoanhThu = doanhThu; // Bây giờ DoanhThu là decimal → hết lỗi
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<Ca?> GetCaDangMoAsync()
+        {
+            return await _context.Cas
+                .Where(c => c.GioKT == null)
+                .OrderByDescending(c => c.GioBD)
+                .FirstOrDefaultAsync();
         }
 
         public async Task DongCaAsync(int maCa)
@@ -46,13 +73,11 @@ namespace Cafe.BLL
                 .ToListAsync();
         }
 
-        public async Task<int> GetDoanhThuCaAsync(int maCa)
+        public async Task<decimal> GetDoanhThuCaAsync(int maCa) // Đổi return type thành decimal
         {
-            var hoaDons = await _context.HoaDons
+            return await _context.HoaDons
                 .Where(h => h.MaCa == maCa && h.TrangThai == "Paid")
-                .ToListAsync();
-
-            return hoaDons.Sum(h => h.TongTien);
+                .SumAsync(h => h.TongTien); // Trả về decimal trực tiếp
         }
     }
 }
