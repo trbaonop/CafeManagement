@@ -1,6 +1,6 @@
-﻿namespace Cafe.Forms
+﻿namespace Cafe.UI
 {
-    partial class frmBanEdit
+    partial class frmBanEdit : Form
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -50,7 +50,7 @@
             this.btnLuu.TabIndex = 2;
             this.btnLuu.Text = "Lưu";
             this.btnLuu.UseVisualStyleBackColor = true;
-            this.btnLuu.Click += new System.EventHandler(this.btnLuu_Click);
+            this.btnLuu.Click += new System.EventHandler(this.BtnLuu_Click);
             // 
             // btnHuy
             // 
@@ -61,9 +61,9 @@
             this.btnHuy.TabIndex = 3;
             this.btnHuy.Text = "Hủy";
             this.btnHuy.UseVisualStyleBackColor = true;
-            this.btnHuy.Click += new System.EventHandler(this.btnHuy_Click);
+            this.btnHuy.Click += new System.EventHandler(this.BtnHuy_Click);
             // 
-            // frmBanEdit
+            // FrmBanEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -75,13 +75,12 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmBanEdit";
+            this.Name = "FrmBanEdit";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Thêm / Sửa Bàn";
-            this.Load += new System.EventHandler(this.frmBanEdit_Load);
+            this.Load += new System.EventHandler(this.FrmBanEdit_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

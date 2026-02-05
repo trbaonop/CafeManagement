@@ -1,6 +1,6 @@
-﻿namespace Cafe.Forms
+﻿namespace Cafe.UI
 {
-    partial class frmOrder
+    partial class frmOrder : Form
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -68,7 +68,7 @@
             this.btnThemMon.TabIndex = 3;
             this.btnThemMon.Text = "Thêm món";
             this.btnThemMon.UseVisualStyleBackColor = true;
-            this.btnThemMon.Click += new System.EventHandler(this.btnThemMon_Click);
+            this.btnThemMon.Click += new System.EventHandler(this.BtnThemMon_Click);
             // 
             // dgvOrder
             // 
@@ -98,7 +98,7 @@
             this.btnThanhToan.TabIndex = 6;
             this.btnThanhToan.Text = "Thanh Toán";
             this.btnThanhToan.UseVisualStyleBackColor = true;
-            this.btnThanhToan.Click += new System.EventHandler(this.btnThanhToan_Click);
+            this.btnThanhToan.Click += new System.EventHandler(this.BtnThanhToan_Click);
             // 
             // btnHuy
             // 
@@ -108,9 +108,9 @@
             this.btnHuy.TabIndex = 7;
             this.btnHuy.Text = "Hủy";
             this.btnHuy.UseVisualStyleBackColor = true;
-            this.btnHuy.Click += new System.EventHandler(this.btnHuy_Click);
+            this.btnHuy.Click += new System.EventHandler(this.BtnHuy_Click);
             // 
-            // frmOrder
+            // FrmOrder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -123,16 +123,15 @@
             this.Controls.Add(this.nudSoLuong);
             this.Controls.Add(this.dgvMenu);
             this.Controls.Add(this.lblBan);
-            this.Name = "frmOrder";
+            this.Name = "FrmOrder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Lập Hóa Đơn";
-            this.Load += new System.EventHandler(this.frmOrder_Load);
+            this.Load += new System.EventHandler(this.FrmOrder_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvMenu)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSoLuong)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOrder)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

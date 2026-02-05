@@ -1,22 +1,34 @@
-﻿using Cafe.DAL;
-using Cafe.Entity;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Microsoft.EntityFrameworkCore;
+using Cafe.DAL;       // CafeContext
+using Cafe.Entity;    // Ban
 
-namespace Cafe.Forms
+namespace Cafe.UI
 {
     public partial class frmBanEdit : Form
     {
-        private readonly int _maBan;
-        private Ban _ban;
+        private readonly CafeContext _context;
+        private Ban? _ban;
 
-        public frmBanEdit(int maBan = 0)
+        /// <summary>
+        /// Property để truyền MaBan từ form cha (frmQuanLyBan)
+        /// </summary>
+        public int MaBan { get; set; } = 0; // 0 = thêm mới, >0 = sửa
+
+        /// <summary>
+        /// Constructor nhận DI từ container
+        /// </summary>
+        public frmBanEdit(CafeContext context)
         {
             InitializeComponent();
-            _maBan = maBan;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        private async void frmBanEdit_Load(object sender, EventArgs e)
+        private async void FrmBanEdit_Load(object sender, EventArgs e)
         {
-            if (_maBan == 0)
+            if (MaBan == 0)
             {
                 this.Text = "Thêm bàn mới";
             }
@@ -24,29 +36,34 @@ namespace Cafe.Forms
             {
                 this.Text = "Sửa tên bàn";
 
-                using var context = new CafeContext();
-                _ban = await context.Bans.FindAsync(_maBan);
+                _ban = await _context.Bans.FindAsync(MaBan);
 
-                if (_ban != null)
+                if (_ban == null)
                 {
-                    txtTenBan.Text = _ban.TenBan;
+                    MessageBox.Show("Không tìm thấy bàn để sửa!", "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.Close();
+                    return;
                 }
+
+                txtTenBan.Text = _ban.TenBan;
             }
         }
 
-        private async void btnLuu_Click(object sender, EventArgs e)
+        private async void BtnLuu_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtTenBan.Text))
             {
-                MessageBox.Show("Vui lòng nhập tên bàn!");
+                MessageBox.Show("Vui lòng nhập tên bàn!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            btnLuu.Enabled = false;
+
             try
             {
-                using var context = new CafeContext();
-
-                if (_maBan == 0)
+                if (MaBan == 0)
                 {
                     // Thêm mới
                     var banMoi = new Ban
@@ -54,29 +71,43 @@ namespace Cafe.Forms
                         TenBan = txtTenBan.Text.Trim(),
                         TrangThai = "Trong"
                     };
-                    context.Bans.Add(banMoi);
-                    await context.SaveChangesAsync();
-                    MessageBox.Show("Thêm bàn thành công!");
+
+                    _context.Bans.Add(banMoi);
                 }
                 else
                 {
                     // Sửa
+                    if (_ban == null)
+                    {
+                        MessageBox.Show("Không tìm thấy bàn để sửa!", "Lỗi",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
                     _ban.TenBan = txtTenBan.Text.Trim();
-                    context.Bans.Update(_ban);
-                    await context.SaveChangesAsync();
-                    MessageBox.Show("Cập nhật thành công!");
+                    _context.Bans.Update(_ban);
                 }
+
+                await _context.SaveChangesAsync();
+
+                MessageBox.Show(MaBan == 0 ? "Thêm bàn thành công!" : "Cập nhật thành công!",
+                    "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show("Lỗi khi lưu bàn: " + ex.Message, "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnLuu.Enabled = true;
             }
         }
 
-        private void btnHuy_Click(object sender, EventArgs e)
+        private void BtnHuy_Click(object sender, EventArgs e)
         {
             this.Close();
         }

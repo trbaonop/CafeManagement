@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -9,12 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPPlus" Version="6.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Cafe.BLL\Cafe.BLL.csproj" />
     <ProjectReference Include="..\Cafe.Common\Cafe.Common.csproj" />
     <ProjectReference Include="..\Cafe.Entity\Cafe.Entity.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <Compile Update="frmBanEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -30,12 +34,8 @@
     <Compile Update="frmMonEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="frmNguoiDungEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="frmOrder.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="frmNguoiDungEdit.cs" />
+    <Compile Update="frmOrder.cs" />
     <Compile Update="frmQuanLyBan.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -45,6 +45,10 @@
     <Compile Update="frmQuanLyNguoiDung.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="frmQuanLyCa.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
+
 
 </Project>

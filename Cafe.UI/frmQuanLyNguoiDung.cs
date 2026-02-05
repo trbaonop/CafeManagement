@@ -2,21 +2,27 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.EntityFrameworkCore;
-using Cafe.Common;
-using Cafe.DAL;
-using Cafe.Entity;
+using Microsoft.Extensions.DependencyInjection; // Để dùng GetRequiredService
+using Cafe.BLL;       
+using Cafe.Common;    // CurrentUser
+using Cafe.Entity;    // NguoiDung
 
-namespace Cafe.Forms
+namespace Cafe.UI
 {
     public partial class frmQuanLyNguoiDung : Form
     {
-        public frmQuanLyNguoiDung()
+        private readonly NguoiDungService _nguoiDungService;
+
+        /// <summary>
+        /// Constructor nhận DI từ container
+        /// </summary>
+        public frmQuanLyNguoiDung(NguoiDungService nguoiDungService)
         {
             InitializeComponent();
+            _nguoiDungService = nguoiDungService ?? throw new ArgumentNullException(nameof(nguoiDungService));
         }
 
-        private async void frmQuanLyNguoiDung_Load(object sender, EventArgs e)
+        private async void FrmQuanLyNguoiDung_Load(object sender, EventArgs e)
         {
             // Chỉ Admin mới được vào
             if (!CurrentUser.IsAdmin)
@@ -27,82 +33,90 @@ namespace Cafe.Forms
                 return;
             }
 
-            await LoadNguoiDung();
+            await LoadNguoiDungAsync();
         }
 
-        private async Task LoadNguoiDung(string keyword = "")
+        private async Task LoadNguoiDungAsync(string keyword = "")
         {
-            using var context = new CafeContext();
-            var query = context.NguoiDungs
-                .Include(u => u.VaiTro)
-                .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(keyword))
+            try
             {
-                keyword = keyword.ToLower();
-                query = query.Where(u => u.TenDangNhap.ToLower().Contains(keyword) ||
-                                         (u.HoTen != null && u.HoTen.ToLower().Contains(keyword)));
+                var users = await _nguoiDungService.GetAllUsersAsync();
+
+                if (!string.IsNullOrWhiteSpace(keyword))
+                {
+                    keyword = keyword.ToLower();
+                    users = users.Where(u => u.TenDangNhap.ToLower().Contains(keyword, StringComparison.OrdinalIgnoreCase) ||
+                                             (u.HoTen != null && u.HoTen.ToLower().Contains(keyword, StringComparison.OrdinalIgnoreCase))).ToList();
+                }
+
+                dgvNguoiDung.DataSource = users.Select(u => new
+                {
+                    u.MaND,
+                    u.TenDangNhap,
+                    u.HoTen,
+                    VaiTro = u.VaiTro?.TenVaiTro ?? "Không có",
+                    TrangThai = u.TrangThai ? "Hoạt động" : "Khóa"
+                }).ToList();
+
+                dgvNguoiDung.Columns["MaND"].Visible = false;
+                dgvNguoiDung.Columns["TenDangNhap"].HeaderText = "Tên đăng nhập";
+                dgvNguoiDung.Columns["HoTen"].HeaderText = "Họ tên";
+                dgvNguoiDung.Columns["VaiTro"].HeaderText = "Vai trò";
+                dgvNguoiDung.Columns["TrangThai"].HeaderText = "Trạng thái";
             }
-
-            var users = await query.ToListAsync();
-
-            dgvNguoiDung.DataSource = users.Select(u => new
+            catch (Exception ex)
             {
-                u.MaND,
-                u.TenDangNhap,
-                u.HoTen,
-                VaiTro = u.VaiTro?.TenVaiTro ?? "Không có",
-                TrangThai = u.TrangThai ? "Hoạt động" : "Khóa"
-            }).ToList();
-
-            dgvNguoiDung.Columns["MaND"].Visible = false;
-            dgvNguoiDung.Columns["TenDangNhap"].HeaderText = "Tên đăng nhập";
-            dgvNguoiDung.Columns["HoTen"].HeaderText = "Họ tên";
-            dgvNguoiDung.Columns["VaiTro"].HeaderText = "Vai trò";
-            dgvNguoiDung.Columns["TrangThai"].HeaderText = "Trạng thái";
+                MessageBox.Show("Lỗi khi tải danh sách người dùng: " + ex.Message, "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private async void btnTimKiem_Click(object sender, EventArgs e)
+        private async void BtnTimKiem_Click(object sender, EventArgs e)
         {
-            await LoadNguoiDung(txtTimKiem.Text.Trim());
+            await LoadNguoiDungAsync(txtTimKiem.Text.Trim());
         }
 
-        private async void btnRefresh_Click(object sender, EventArgs e)
+        private async void BtnRefresh_Click(object sender, EventArgs e)
         {
             txtTimKiem.Clear();
-            await LoadNguoiDung();
+            await LoadNguoiDungAsync();
         }
 
-        private void btnThem_Click(object sender, EventArgs e)
+        private async void BtnThem_Click(object sender, EventArgs e)
         {
-            var frm = new frmNguoiDungEdit(0); // 0 = thêm mới
+            var frm = Program.ServiceProvider.GetRequiredService<frmNguoiDungEdit>();
+            frm.MaND = 0; // 0 = thêm mới
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                LoadNguoiDung();
+                await LoadNguoiDungAsync();
             }
         }
 
-        private void btnSua_Click(object sender, EventArgs e)
+        private async void BtnSua_Click(object sender, EventArgs e)
         {
             if (dgvNguoiDung.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn người dùng cần sửa!");
+                MessageBox.Show("Vui lòng chọn người dùng cần sửa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             int maND = Convert.ToInt32(dgvNguoiDung.SelectedRows[0].Cells["MaND"].Value);
-            var frm = new frmNguoiDungEdit(maND);
+
+            var frm = Program.ServiceProvider.GetRequiredService<frmNguoiDungEdit>();
+            frm.MaND = maND;
             if (frm.ShowDialog() == DialogResult.OK)
             {
-                LoadNguoiDung();
+                await LoadNguoiDungAsync();
             }
         }
 
-        private async void btnXoa_Click(object sender, EventArgs e)
+        private async void BtnXoa_Click(object sender, EventArgs e)
         {
             if (dgvNguoiDung.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Vui lòng chọn người dùng cần khóa!");
+                MessageBox.Show("Vui lòng chọn người dùng cần khóa!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -111,21 +125,24 @@ namespace Cafe.Forms
             if (MessageBox.Show("Bạn có chắc muốn khóa tài khoản này?\nNgười dùng sẽ không thể đăng nhập.", "Xác nhận",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                using var context = new CafeContext();
-                var user = await context.NguoiDungs.FindAsync(maND);
-                if (user != null)
+                try
                 {
-                    user.TrangThai = false;
-                    await context.SaveChangesAsync();
+                    await _nguoiDungService.KhoaTaiKhoanAsync(maND); // Cần thêm method này trong NguoiDungService
+                    MessageBox.Show("Đã khóa tài khoản thành công!", "Thành công",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    await LoadNguoiDungAsync();
                 }
-
-                await LoadNguoiDung();
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi khóa tài khoản: " + ex.Message, "Lỗi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
-        private void dgvNguoiDung_DoubleClick(object sender, EventArgs e)
+        private void DgvNguoiDung_DoubleClick(object sender, EventArgs e)
         {
-            btnSua_Click(sender, e);
+            BtnSua_Click(sender, e);
         }
     }
 }

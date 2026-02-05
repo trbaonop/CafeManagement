@@ -1,6 +1,6 @@
-﻿namespace Cafe.Forms
+﻿namespace Cafe.UI
 {
-    partial class frmNguoiDungEdit
+    partial class frmNguoiDungEdit : Form
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -127,7 +127,7 @@
             this.btnLuu.TabIndex = 9;
             this.btnLuu.Text = "Lưu";
             this.btnLuu.UseVisualStyleBackColor = true;
-            this.btnLuu.Click += new System.EventHandler(this.btnLuu_Click);
+            this.btnLuu.Click += new System.EventHandler(this.BtnLuu_Click);
             // 
             // btnHuy
             // 
@@ -138,9 +138,9 @@
             this.btnHuy.TabIndex = 10;
             this.btnHuy.Text = "Hủy";
             this.btnHuy.UseVisualStyleBackColor = true;
-            this.btnHuy.Click += new System.EventHandler(this.btnHuy_Click);
+            this.btnHuy.Click += new System.EventHandler(this.BtnHuy_Click);
             // 
-            // frmNguoiDungEdit
+            // FrmNguoiDungEdit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -159,13 +159,12 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmNguoiDungEdit";
+            this.Name = "FrmNguoiDungEdit";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Thêm / Sửa Người Dùng";
-            this.Load += new System.EventHandler(this.frmNguoiDungEdit_Load);
+            this.Load += new System.EventHandler(this.FrmNguoiDungEdit_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

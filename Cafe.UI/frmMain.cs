@@ -3,49 +3,55 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Cafe.BLL;
-using Cafe.Common;
+using Microsoft.Extensions.DependencyInjection; // Để dùng GetRequiredService
+using Cafe.BLL;       // BanService
+using Cafe.Common;    // CurrentUser
 
-namespace Cafe.Forms
+namespace Cafe.UI
 {
     public partial class frmMain : Form
     {
-        private readonly BanService _banService = new BanService();
+        private readonly BanService _banService;
 
-        public frmMain()
+        public frmMain(BanService banService)
         {
             InitializeComponent();
+            _banService = banService ?? throw new ArgumentNullException(nameof(banService));
         }
 
-        private async void frmMain_Load(object sender, EventArgs e)
+        private async void FrmMain_Load(object sender, EventArgs e)
         {
+            // Kiểm tra đăng nhập
             if (!CurrentUser.IsLoggedIn)
             {
-                MessageBox.Show("Vui lòng đăng nhập để tiếp tục!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng đăng nhập để tiếp tục!", "Thông báo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.Close();
-                new frmLogin().Show();
+                var frmLogin = Program.ServiceProvider.GetRequiredService<frmLogin>();
+                frmLogin.Show();
                 return;
             }
 
+            // Hiển thị thông tin người dùng
             toolStripLabelUser.Text = $"Người dùng: {CurrentUser.GetInfo()}";
 
+            // Phân quyền menu
             PhanQuyen();
 
-            await LoadDashboardBan();
+            // Load dashboard bàn
+            await LoadDashboardBanAsync();
         }
 
         private void PhanQuyen()
         {
-            // Chỉ Admin mới được quản lý menu, bàn, người dùng
             mnuQuanLyMenu.Visible = CurrentUser.IsAdmin;
             mnuQuanLyBan.Visible = CurrentUser.IsAdmin;
             mnuQuanLyNguoiDung.Visible = CurrentUser.IsAdmin;
-
-            // Quản lý và Admin mới xem báo cáo
+            mnuQuanLyCa.Visible = CurrentUser.IsAdmin || CurrentUser.IsQuanLy;
             mnuBaoCaoDoanhThu.Visible = CurrentUser.IsAdmin || CurrentUser.IsQuanLy;
         }
 
-        private async Task LoadDashboardBan()
+        private async Task LoadDashboardBanAsync()
         {
             flowBan.Controls.Clear();
 
@@ -53,7 +59,7 @@ namespace Cafe.Forms
 
             foreach (var ban in bans)
             {
-                Button btnBan = new Button
+                var btnBan = new Button
                 {
                     Width = 130,
                     Height = 130,
@@ -62,12 +68,12 @@ namespace Cafe.Forms
                     ForeColor = Color.White,
                     BackColor = ban.TrangThai == "Trong" ? Color.ForestGreen : Color.Firebrick,
                     FlatStyle = FlatStyle.Flat,
-                    Tag = ban.MaBan
+                    Tag = ban.MaBan,
+                    Margin = new Padding(10)
                 };
 
-                btnBan.FlatAppearance.BorderSize = 2;
+                btnBan.FlatAppearance.BorderSize = 3;
                 btnBan.FlatAppearance.BorderColor = Color.White;
-
                 btnBan.Click += BtnBan_Click;
 
                 flowBan.Controls.Add(btnBan);
@@ -77,42 +83,54 @@ namespace Cafe.Forms
         private void BtnBan_Click(object sender, EventArgs e)
         {
             int maBan = (int)((Button)sender).Tag;
-            var frmOrder = new frmOrder(maBan);
+
+            var frmOrder = Program.ServiceProvider.GetRequiredService<frmOrder>();
+            frmOrder.MaBan = maBan;
+
             frmOrder.ShowDialog();
 
-            // Refresh dashboard sau khi order/thanh toán
-            LoadDashboardBan();
+            // Sau khi đóng form, refresh dashboard bàn
+            LoadDashboardBanAsync(); // Không await vì event handler sync, nhưng vẫn chạy async
         }
 
-        // === SỰ KIỆN CLICK CHO CÁC MENU ===
-
-        private void mnuQuanLyMenu_Click(object sender, EventArgs e)
+        // ================== SỰ KIỆN MENU ==================
+        private void MnuQuanLyMenu_Click(object sender, EventArgs e)
         {
-            new frmQuanLyMenu().ShowDialog();
+            var frm = Program.ServiceProvider.GetRequiredService<frmQuanLyMenu>();
+            frm.ShowDialog();
         }
 
-        private void mnuQuanLyBan_Click(object sender, EventArgs e)  // <--- THÊM DÒNG NÀY
+        private void MnuQuanLyBan_Click(object sender, EventArgs e)
         {
-            new frmQuanLyBan().ShowDialog();
-            LoadDashboardBan(); // Refresh lại bàn nếu có thay đổi
+            var frm = Program.ServiceProvider.GetRequiredService<frmQuanLyBan>();
+            frm.ShowDialog();
+            LoadDashboardBanAsync(); // Không await vì event handler sync, nhưng vẫn chạy async
         }
 
-        private void mnuQuanLyNguoiDung_Click(object sender, EventArgs e)
+        private void MnuQuanLyNguoiDung_Click(object sender, EventArgs e)
         {
-            new frmQuanLyNguoiDung().ShowDialog();
+            var frm = Program.ServiceProvider.GetRequiredService<frmQuanLyNguoiDung>();
+            frm.ShowDialog();
         }
 
-        private void mnuBaoCaoDoanhThu_Click(object sender, EventArgs e)
+        private void MnuQuanLyCa_Click(object sender, EventArgs e)
         {
-            new frmBaoCaoDoanhThu().ShowDialog();
+            var frm = Program.ServiceProvider.GetRequiredService<frmQuanLyCa>();
+            frm.ShowDialog();
         }
 
-        private void mnuDangXuat_Click(object sender, EventArgs e)
+        private void MnuBaoCaoDoanhThu_Click(object sender, EventArgs e)
+        {
+            var frm = Program.ServiceProvider.GetRequiredService<frmBaoCaoDoanhThu>();
+            frm.ShowDialog();
+        }
+
+        private void MnuDangXuat_Click(object sender, EventArgs e)
         {
             DangXuat();
         }
 
-        private void toolStripButtonDangXuat_Click(object sender, EventArgs e)
+        private void ToolStripButtonDangXuat_Click(object sender, EventArgs e)
         {
             DangXuat();
         }
@@ -124,7 +142,8 @@ namespace Cafe.Forms
             {
                 CurrentUser.Logout();
                 this.Close();
-                new frmLogin().Show();
+                var frmLogin = Program.ServiceProvider.GetRequiredService<frmLogin>();
+                frmLogin.Show();
             }
         }
     }

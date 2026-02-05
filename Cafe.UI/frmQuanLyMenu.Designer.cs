@@ -1,6 +1,6 @@
-﻿namespace Cafe.Forms
+﻿namespace Cafe.UI
 {
-    partial class frmQuanLyMenu
+    partial class frmQuanLyMenu : Form
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -45,7 +45,7 @@
             this.btnTimKiem.TabIndex = 1;
             this.btnTimKiem.Text = "Tìm kiếm";
             this.btnTimKiem.UseVisualStyleBackColor = true;
-            this.btnTimKiem.Click += new System.EventHandler(this.btnTimKiem_Click);
+            this.btnTimKiem.Click += new System.EventHandler(this.BtnTimKiem_Click);
             // 
             // dgvMenu
             // 
@@ -55,7 +55,7 @@
             this.dgvMenu.RowTemplate.Height = 30;
             this.dgvMenu.Size = new System.Drawing.Size(1060, 400);
             this.dgvMenu.TabIndex = 2;
-            this.dgvMenu.DoubleClick += new System.EventHandler(this.dgvMenu_DoubleClick);
+            this.dgvMenu.DoubleClick += new System.EventHandler(this.DgvMenu_DoubleClick);
             // 
             // btnThem
             // 
@@ -66,7 +66,7 @@
             this.btnThem.TabIndex = 3;
             this.btnThem.Text = "Thêm món mới";
             this.btnThem.UseVisualStyleBackColor = true;
-            this.btnThem.Click += new System.EventHandler(this.btnThem_Click);
+            this.btnThem.Click += new System.EventHandler(this.BtnThem_Click);
             // 
             // btnSua
             // 
@@ -77,7 +77,7 @@
             this.btnSua.TabIndex = 4;
             this.btnSua.Text = "Sửa món";
             this.btnSua.UseVisualStyleBackColor = true;
-            this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
+            this.btnSua.Click += new System.EventHandler(this.BtnSua_Click);
             // 
             // btnXoa
             // 
@@ -88,7 +88,7 @@
             this.btnXoa.TabIndex = 5;
             this.btnXoa.Text = "Ngưng bán";
             this.btnXoa.UseVisualStyleBackColor = true;
-            this.btnXoa.Click += new System.EventHandler(this.btnXoa_Click);
+            this.btnXoa.Click += new System.EventHandler(this.BtnXoa_Click);
             // 
             // btnRefresh
             // 
@@ -99,7 +99,7 @@
             this.btnRefresh.TabIndex = 6;
             this.btnRefresh.Text = "Làm mới";
             this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
             // label1
             // 
@@ -111,7 +111,7 @@
             this.label1.TabIndex = 7;
             this.label1.Text = "Tìm kiếm:";
             // 
-            // frmQuanLyMenu
+            // FrmQuanLyMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -124,14 +124,13 @@
             this.Controls.Add(this.dgvMenu);
             this.Controls.Add(this.btnTimKiem);
             this.Controls.Add(this.txtTimKiem);
-            this.Name = "frmQuanLyMenu";
+            this.Name = "FrmQuanLyMenu";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Quản Lý Danh Mục Đồ Uống";
-            this.Load += new System.EventHandler(this.frmQuanLyMenu_Load);
+            this.Load += new System.EventHandler(this.FrmQuanLyMenu_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvMenu)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
